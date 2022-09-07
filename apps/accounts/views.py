@@ -28,9 +28,9 @@ class RegisterUser(APIView):
   sr = RegisterSerializer(data=request.data)
   if sr.is_valid(raise_exception=True):
    sr.save()
-   return Response({},status=status.HTTP_201_CREATED)
+   return Response({'msg':'user created'},status=status.HTTP_201_CREATED)
   
-  return Response({},status=status.HTTP_400_CREATED)
+  return Response({'errors':'user not created'},status=status.HTTP_400_BAD_REQUEST)
 
 # login view:
 # Authenticate User and give a response

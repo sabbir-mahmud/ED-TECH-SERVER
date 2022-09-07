@@ -97,7 +97,7 @@ class Profile(models.Model):
  created = models.DateTimeField(auto_now_add=True)
  updated = models.DateTimeField(auto_now=True)
  verified = models.BooleanField(default=False)
- verifying_code = models.IntegerField()
+ verifying_code = models.CharField(max_length=245)
 
  def __str__(self):
   return self.name

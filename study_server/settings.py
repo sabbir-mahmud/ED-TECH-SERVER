@@ -31,7 +31,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     # user model
-    'apps.accounts',
+    'apps.accounts.apps.AccountsConfig',
 ]
 
 # custom user model
@@ -123,6 +123,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'Media/')
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'django.sabbir@gmail.com'
+EMAIL_HOST_PASSWORD = '1213543525'
 
 # Rest framework Settings:
 
