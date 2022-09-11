@@ -37,15 +37,10 @@ class UserManager(BaseUserManager):
 
 # user model
 class User(AbstractBaseUser):
- genders = (
-  ('Male', 'Male'),
-  ('Female', 'Female'),
-  ('Others', 'Others'),
- )
  email = models.EmailField(max_length=245, unique=True)
  first_name = models.CharField(max_length=245)
  last_name = models.CharField(max_length=245)
- gender = models.CharField(max_length=245, choices=genders)
+ gender = models.CharField(max_length=245)
  staff = models.BooleanField(default=False)
  admin = models.BooleanField(default=False)
  created = models.DateTimeField(auto_now_add=True)

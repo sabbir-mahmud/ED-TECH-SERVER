@@ -1,5 +1,6 @@
 # imports
 from dataclasses import fields
+from unittest.util import _MAX_LENGTH
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -43,11 +44,17 @@ class RegisterSerializer(serializers.ModelSerializer):
   user = User.objects.create(
     email=validated_data['email'],
     first_name=validated_data['first_name'],
-    last_name=validated_data['last_name']
+    last_name=validated_data['last_name'],
+    gender=validated_data['gender']
    )
   user.set_password(validated_data['password'])
   user.save()
   return user
+
+# verify user serializer
+class VerifyUserSerializer(serializers.Serializer):
+  user_code = serializers.CharField(max_length=6)
+
 
 # login Serializer
 class LoginSerializer(serializers.ModelSerializer):

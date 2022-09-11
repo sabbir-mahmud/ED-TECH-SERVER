@@ -1,5 +1,5 @@
 # imports
-import uuid
+from random import randint
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -12,15 +12,15 @@ from .models import Profile
 User = get_user_model()
 
 def verifier(user, token):
- subject = 'Verify your account'
- msg = f' Hello {user.first_name} {user.last_name} to verify your account http://127.0.0.1:8000/accounts/{token}'
+ subject = 'Learn With Sabbir:: Verify your account'
+ msg = f' Hello {user.first_name} {user.last_name} your verify code is {token}'
  from_email = settings.EMAIL_HOST_USER
  recipient_list = [user.email]
  send_mail(subject=subject, message=msg, from_email=from_email,recipient_list=recipient_list)
 
 # profile signals
 def create_profile(created, instance,*args, **kwargs):
- code = uuid.uuid4()
+ code = f'{randint(0,9)}{randint(0,9)}{randint(0,9)}{randint(0,9)}{randint(0,9)}{randint(0,9)}'
  if created:
   Profile.objects.create(
    user=instance,

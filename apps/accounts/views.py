@@ -1,7 +1,8 @@
 # imports
 import json
+from random import randint
 
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, get_user_model
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -11,8 +12,11 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import Profile
-from .serializers import LoginSerializer, ProfileSerializer, RegisterSerializer
+from .serializers import (LoginSerializer, ProfileSerializer,
+                          RegisterSerializer, VerifyUserSerializer)
 
+# User
+User = get_user_model()
 
 # JWT Generator.
 def jwt_generator(user):
@@ -21,6 +25,7 @@ def jwt_generator(user):
   'refresh': str(refresh),
   'access': str(refresh.access_token),
  }
+
 
 # Register new user view
 class RegisterUser(APIView):
@@ -32,6 +37,24 @@ class RegisterUser(APIView):
   
   return Response({'errors':'user not created'},status=status.HTTP_400_BAD_REQUEST)
 
+# Verify User
+class VerifyUser(APIView):
+  authentication_classes = [JWTAuthentication]
+  permission_classes = [IsAuthenticated]
+
+  def post(self, request):
+    sr = VerifyUserSerializer(data=request.data)
+    sr.is_valid(raise_exception=True)
+    user = Profile.objects.get(user=request.user)
+    serverCode = user.verifying_code
+    userCode = sr.data.get('user_code')
+    if serverCode == userCode:
+      user.verified = True
+      user.save()
+      return Response({'msg':'Verified Successfully'},status=status.HTTP_202_ACCEPTED)
+    else:
+      return Response({'errors':'Verify code is not valid'},status=status.HTTP_400_BAD_REQUEST)
+
 # login view:
 # Authenticate User and give a response
 class LoginView(APIView):
@@ -41,6 +64,7 @@ class LoginView(APIView):
   email = sr.data.get('email')
   password = sr.data.get('password')
   user = authenticate(email=email,password=password)
+  
   if user is not None:
    token = jwt_generator(user)
    profile = Profile.objects.get(user=user)
@@ -50,7 +74,6 @@ class LoginView(APIView):
     'name':profile.name,
     'image':profile.img.url,
     'verified':profile.verified
-    
    }
    return Response({
     'token':token,
